@@ -1,11 +1,11 @@
 {
   "expo": {
     "name": "ViV",
-    "slug": "viv",
+    "slug": "ViV",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "ViV",
+    "scheme": "viv",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
