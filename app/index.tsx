@@ -7,7 +7,7 @@ import { router } from "expo-router";
 
 export default function App() {
   return (
-    <SafeAreaView className="bg-primary h-full">
+    <SafeAreaView className="bg-black-100 h-full">
       <ScrollView contentContainerStyle={{ height: "100%" }}>
         <View className="w-full justify-center items-center flex h-full px-4">
           <View className="flex items-center flex-row justify-center">
