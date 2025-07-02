@@ -1,3 +1,5 @@
+import { Account, Avatars, Client, Databases, ID } from 'react-native-appwrite';
+
 export const appwriteConfig = {
     endpoint: 'https://fra.cloud.appwrite.io/v1',
     platform: 'com.vivek.viv',
@@ -6,4 +8,62 @@ export const appwriteConfig = {
     usersCollectionId: '6857d6c7000de13277dc',
     videosColletionId: '685b9115001446368109',
     storageId: '685badee00042d0fb7ed'
+}
+
+const client = new Client();
+client
+    .setEndpoint(appwriteConfig.endpoint)
+    .setProject(appwriteConfig.projectId)
+    .setPlatform(appwriteConfig.platform)
+    ;
+
+const account = new Account(client);
+const avatars = new Avatars(client);
+const databases = new Databases(client);
+
+export const createUser = async (email: string, password: string, user_name: string) => {
+    try {
+        const newAccount = await account.create(
+            ID.unique(),
+            email,
+            password,
+            user_name
+        )
+
+        if(!newAccount) {
+            throw new Error('User creation failed');
+        }
+
+        const avatarUrl = avatars.getInitials(user_name);
+
+        await signIn(email, password);
+
+        const newUser = await databases.createDocument(
+            appwriteConfig.databaseId,
+            appwriteConfig.usersCollectionId,
+            ID.unique(),
+            {
+                accountId: newAccount.$id,
+                email,
+                user_name,
+                avatar: avatarUrl
+            }
+        )
+
+        return newUser;
+    } catch (error) {
+        console.error('Error creating user:', error);
+        throw new Error('Failed to create user');
+    }
+}
+
+export async function signIn(email: string, password: string) {
+    try {
+        const session = await account.createEmailPasswordSession(email, password);
+
+        return session;
+    } catch (error) {
+        console.error('Error signing in:', error);
+        throw new Error('Failed to sign in');
+    }
 }
