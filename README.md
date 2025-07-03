@@ -4,7 +4,6 @@ A mobile application built with **React Native** ⚛️, **Expo** 📦, and **Na
 
 ## Features ✨
 
-- 🖼️ Generate images and videos using AI with user-provided prompts
 - 🤝 Share generated media with the community
 - 🔍 Browse and interact with content shared by others
 - 🎨 Modern UI powered by NativeWind
