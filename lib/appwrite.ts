@@ -34,7 +34,9 @@ export const createUser = async (email: string, password: string, user_name: str
             throw new Error('User creation failed');
         }
 
-        const avatarUrl = avatars.getInitials(user_name);
+        const avatarBuffer = await avatars.getInitials(user_name);
+        const base64Avatar = Buffer.from(avatarBuffer).toString('base64');
+        const avatarUrl = `data:image/png;base64,${base64Avatar}`;
 
         await signIn(email, password);
 
@@ -70,17 +72,26 @@ export const signIn = async (email: string, password: string) => {
 
 export const getCurrentUser = async () => {
     try {
+        const sessions = await account.getSession('current').catch(() => null);
+        if (!sessions) {
+            console.warn('No active session. Please sign in.');
+            return null;
+        }
+
         const currentAccount = await account.get();
 
-        if(!currentAccount) throw Error;
+        if (!currentAccount) {
+            console.warn('No account found.');
+            return null;
+        }
 
         const currentUser = await databases.listDocuments(
             appwriteConfig.databaseId,
             appwriteConfig.usersCollectionId,
             [Query.equal('accountId', currentAccount.$id)]
-        )
+        );
 
-        if(!currentUser) throw Error;
+        if (!currentUser || !currentUser.documents.length) throw new Error('No user document found.');
 
         return currentUser.documents[0];
     } catch (error) {
